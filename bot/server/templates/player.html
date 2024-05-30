@@ -2,35 +2,29 @@
 <html lang="en">
   <head>
     <title>Play Files</title>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-Frame-Options" content="deny">
-
     <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
     <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-
     <style>
       html, body {
         margin: 0;
         height: 100%;
       }
-
       #stream-media {
         height: 100%;
         width: 100%;
       }
-
       #error-message {
         color: red;
         font-size: 24px;
         text-align: center;
         margin-top: 20px;
       }
-
-      .plyr__video-wrapper .plyr-download-button{
+      .plyr__video-wrapper .plyr-download-button,
+      .plyr__video-wrapper .plyr-share-button {
         position: absolute;
         top: 10px;
         left: 10px;
@@ -43,54 +37,46 @@
         color: white;
         z-index: 10;
       }
-
       .plyr__volume {
         max-width: initial;
         min-width: initial;
         width: auto;
         position: relative;
       }
-
-
-      .plyr__video-wrapper .plyr-share-button{
-        position: absolute;
+      .plyr__video-wrapper .plyr-share-button {
         top: 50px;
-        left: 10px;
-        width: 30px;
-        height: 30px;
-        background-color: rgba(0, 0, 0, 0.7);
-        border-radius: 50%;
-        text-align: center;
-        line-height: 30px;
-        color: white;
-        z-index: 10;
       }
-
       .plyr__video-wrapper .plyr-download-button:hover,
-      .plyr__video-wrapper .plyr-share-button:hover{
+      .plyr__video-wrapper .plyr-share-button:hover {
         background-color: rgba(255, 255, 255, 0.7);
         color: black;
       }
-
       .plyr__video-wrapper .plyr-download-button:before {
         font-family: "Font Awesome 5 Free";
         content: "\f019";
         font-weight: bold;
       }
-
       .plyr__video-wrapper .plyr-share-button:before {
         font-family: "Font Awesome 5 Free";
         content: "\f064";
         font-weight: bold;
       }
-
       .plyr, .plyr__video-wrapper, .plyr__video-embed iframe {
         height: 100%;
       }
-
+      .extra-buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding: 0 5px;
+        margin-top: 10px;
+      }
+      .extra-buttons .btn {
+        margin: 5px;
+      }
     </style>
   </head>
-
   <body>
     <video id="stream-media" controls preload="auto">
       <source src="" type="">
@@ -98,57 +84,101 @@
         To view this video please enable JavaScript, and consider upgrading to a web browser that supports HTML5 video
       </p>
     </video>
-
     <div id="error-message"></div>
+    <div class="extra-buttons">
+      <div onclick="mx_player()" class="btn btn-primary">MX Player</div>
+      <div onclick="vlc_player()" class="btn btn-primary">VLC Mobile</div>
+      <div onclick="km_player()" class="btn btn-primary">KM Player</div>
+      <div onclick="copyUrl()" class="btn btn-primary">Copy Url</div>
+      <div onclick="download()" class="btn btn-primary">Download</div>
+    </div>
 
     <script>
       var player = new Plyr('#stream-media', {
-          controls:['play-large', 'rewind', 'play', 'fast-forward', 'progress', 'current-time', 'mute', 'settings', 'pip', 'fullscreen'],
-          settings:['speed','loop'],
-          speed:{selected:1,options:[0.25,0.5,0.75,1,1.25,1.5,1.75,2]},
-          seek: 10,
-          keyboard: { focused: true, global: true },
+        controls: ['play-large', 'rewind', 'play', 'fast-forward', 'progress', 'current-time', 'mute', 'settings', 'pip', 'fullscreen'],
+        settings: ['speed', 'loop'],
+        speed: { selected: 1, options: [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2] },
+        seek: 10,
+        keyboard: { focused: true, global: true },
       });
 
       var mediaLink = "{{ mediaLink }}";
 
       if (mediaLink) {
-          document.querySelector('#stream-media source').setAttribute('src', mediaLink);
-          player.restart();
+        document.querySelector('#stream-media source').setAttribute('src', mediaLink);
+        player.restart();
 
-          var downloadButton = document.createElement('div');
-          downloadButton.className = 'plyr-download-button';
+        var downloadButton = document.createElement('div');
+        downloadButton.className = 'plyr-download-button';
 
-          downloadButton.onclick = function() {
-            event.stopPropagation();
-            var link = document.createElement('a');
-            link.href = mediaLink;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-          };
+        downloadButton.onclick = function () {
+          event.stopPropagation();
+          var link = document.createElement('a');
+          link.href = mediaLink;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        };
 
-          player.elements.container.querySelector('.plyr__video-wrapper').appendChild(downloadButton);
+        player.elements.container.querySelector('.plyr__video-wrapper').appendChild(downloadButton);
 
-          var shareButton = document.createElement('div');
-          shareButton.className = 'plyr-share-button';
+        var shareButton = document.createElement('div');
+        shareButton.className = 'plyr-share-button';
 
-          shareButton.onclick = function() {
-            event.stopPropagation();
-            if (navigator.share) {
-              navigator.share({
-                title: "Play",
-                url: mediaLink
-              });
-            }
-          };
+        shareButton.onclick = function () {
+          event.stopPropagation();
+          if (navigator.share) {
+            navigator.share({
+              title: "Play",
+              url: mediaLink
+            });
+          }
+        };
 
-          player.elements.container.querySelector('.plyr__video-wrapper').appendChild(shareButton);
+        player.elements.container.querySelector('.plyr__video-wrapper').appendChild(shareButton);
 
       } else {
-          document.getElementById('error-message').textContent = 'Error: Media URL not provided';
+        document.getElementById('error-message').textContent = 'Error: Media URL not provided';
+      }
+
+      function mx_player() {
+        const openDownloadLink = mediaLink;
+        const openMx = `intent:${openDownloadLink}#Intent;package=com.mxtech.videoplayer.ad;end`;
+        window.location.href = openMx;
+      }
+
+      function vlc_player() {
+        const openDownloadLink = mediaLink;
+        const openVlc = `vlc://${openDownloadLink}`;
+        window.location.href = openVlc;
+      }
+
+      function km_player() {
+        const openDownloadLink = mediaLink;
+        const openKmplayer = `intent:${openDownloadLink}#Intent;package=com.kmplayer;end`;
+        window.location.href = openKmplayer;
+      }
+
+      function get_file() {
+        // Implement your file retrieval logic here
+      }
+
+      function copyUrl() {
+        navigator.clipboard.writeText(mediaLink).then(() => {
+          alert("URL copied to clipboard");
+        }).catch(err => {
+          alert("Failed to copy URL");
+        });
+      }
+
+      function download() {
+        var link = document.createElement('a');
+        link.href = mediaLink;
+        link.download = '';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     </script>
-
   </body>
 </html>
