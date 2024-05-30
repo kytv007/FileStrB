@@ -153,7 +153,10 @@
                 .then(response => {
                     if (response.ok) {
                         const contentDisposition = response.headers.get('Content-Disposition');
-                        const fileName = contentDisposition ? contentDisposition.split('filename=')[1] : mediaLink.split('/').pop();
+                        let fileName = contentDisposition ? contentDisposition.split('filename=')[1] : mediaLink.split('/').pop();
+                        if (fileName.startsWith('"') && fileName.endsWith('"')) {
+                            fileName = fileName.substring(1, fileName.length - 1); // Remove surrounding quotes
+                        }
                         const fileSize = response.headers.get('Content-Length');
                         document.getElementById('file-name').textContent = fileName;
                         document.getElementById('file-size').textContent = humanFileSize(fileSize);
@@ -193,7 +196,7 @@
 
         function nplayer() {
             const openDownloadLink = mediaLink;
-            const openNplayer = `intent:${openDownloadLink}#Intent;package=com.nplayer;end`;
+            const openNplayer = `intent:${openDownloadLink}#Intent;package=com.winneapps.nplayer;end`;
             window.location.href = openNplayer;
         }
 
