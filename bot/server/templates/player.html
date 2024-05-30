@@ -40,13 +40,14 @@
             margin: 5px 0;
         }
 
-        .file-info .file-name {
+        .file-info .label {
             color: #e74c3c;
             font-weight: bold;
         }
 
-        .file-info .file-size {
-            color: #e74c3c;
+        .file-info .value {
+            color: white;
+            font-weight: normal;
         }
 
         .container {
@@ -124,8 +125,8 @@
         </video>
     </div>
     <div class="file-info">
-        <p class="file-name">File Name: <span id="file-name">Loading...</span></p>
-        <p class="file-size">File Size: <span id="file-size">Loading...</span></p>
+        <p><span class="label">File Name:</span> <span id="file-name" class="value">Loading...</span></p>
+        <p><span class="label">File Size:</span> <span id="file-size" class="value">Loading...</span></p>
     </div>
     <div id="error-message"></div>
     <div class="container">
@@ -155,7 +156,7 @@
                         const fileName = contentDisposition ? contentDisposition.split('filename=')[1] : mediaLink.split('/').pop();
                         const fileSize = response.headers.get('Content-Length');
                         document.getElementById('file-name').textContent = fileName;
-                        document.getElementById('file-size').textContent = (fileSize / (1024 * 1024)).toFixed(2) + ' MiB';
+                        document.getElementById('file-size').textContent = humanFileSize(fileSize);
                     } else {
                         throw new Error('Failed to fetch file info');
                     }
@@ -171,6 +172,11 @@
 
         } else {
             document.getElementById('error-message').textContent = 'Error: Media URL not provided';
+        }
+
+        function humanFileSize(size) {
+            const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
+            return (size / Math.pow(1024, i)).toFixed(2) * 1 + ' ' + ['B', 'kB', 'MB', 'GB', 'TB'][i];
         }
 
         function mx_player() {
