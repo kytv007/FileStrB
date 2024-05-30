@@ -73,14 +73,44 @@
             text-align: center;
             text-decoration: none;
             gap: 10px;
+            opacity: 0;
+            transform: translateX(-100%);
+            animation: slide-in 1s forwards;
+        }
+
+        .btn i {
+            margin-right: 10px;
         }
 
         .btn:hover {
             background-color: #555;
         }
 
-        .btn i {
-            margin-right: 10px;
+        @keyframes slide-in {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .btn:nth-child(1) {
+            animation-delay: 0.2s;
+        }
+
+        .btn:nth-child(2) {
+            animation-delay: 0.4s;
+        }
+
+        .btn:nth-child(3) {
+            animation-delay: 0.6s;
+        }
+
+        .btn:nth-child(4) {
+            animation-delay: 0.8s;
+        }
+
+        .btn:nth-child(5) {
+            animation-delay: 1s;
         }
     </style>
 </head>
@@ -103,7 +133,7 @@
         <button onclick="copyUrl()" class="btn"><i class="fas fa-link"></i>COPY LINK</button>
         <button onclick="vlc_player()" class="btn"><i class="fas fa-play-circle"></i>WATCH IN VLC PLAYER</button>
         <button onclick="mx_player()" class="btn"><i class="fas fa-play-circle"></i>WATCH IN MX PLAYER</button>
-        
+        <button onclick="nplayer()" class="btn"><i class="fas fa-play-circle"></i>WATCH IN NPLAYER</button>
     </div>
 
     <script>
